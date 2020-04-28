@@ -2,20 +2,21 @@
     include_once 'DBConnector.php';
     include_once 'user.php';
 
-    if(isset($_POST['btn_login'])){
+    if(isset($_POST['btn-login'])){
         $username = $_POST['username'];
         $password = $_POST['password'];
         $instance = User::create();
         $instance->openConnection();
-        $instance->setPassword();
-        $instance->setUsername();
+        $instance->setPassword($password);
+        $instance->setUsername($username);
 
         if($instance->isPasswordcorrect()){
             $instance->login();
-            $instance->closeConnection();
             $instance->createUserSession();
         } else {
-            header("Location:login.php");
+            $instance->createLoginErrorSessions();
+            header("Refresh:0");
+            die();
         }
     }
 ?>
@@ -32,8 +33,21 @@
 
     <body>
 
-        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" name="login" id="login">
+        <form method="post" name="login" id="login" action="<?php echo $_SERVER['PHP_SELF'];?>" >
             <table align="center">
+            <tr>
+                    <td>
+                        <div id="form-errors">
+                            <?php
+                                session_start();
+                                if(!empty($_SESSION['form_errors'])){
+                                    echo " " . $_SESSION['form_errors'];
+                                    unset($_SESSION['form_errors']);
+                                }
+                            ?>
+                        </div>
+                    </td>
+                </tr>
                 <tr>
                     <td><input type="text" name="username" placeholder="Username" required></td>
                 </tr>

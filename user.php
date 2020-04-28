@@ -2,7 +2,7 @@
     include "Crud.php";
     include "Authenticator.php";
 
-    class User implements Crud{
+    class User implements Crud, Authenticator{
         private $user_id;
         private $first_name;
         private $last_name;
@@ -58,7 +58,7 @@
         }
 
         //close DB connection
-        public function closeConection(){
+        public function closeConnection(){
             $conn = new DBConncetor;
             return $conn->closeDatabase();
         }
@@ -71,7 +71,7 @@
             $pass = $this->password;
             $link = $this->openConnection();
             $res = mysqli_query($link,"INSERT INTO user(first_name,last_name,user_city,username,password) VALUES ('$fn','$ln','$city','$uname','$pass')") or die ("Error: " .mysqli_error($link));
-            $this->closeConection();
+            $this->closeConnection();
             return $res;
         }
 
@@ -79,7 +79,7 @@
             $sql = "SELECT * FROM user";
             $link = $this->openConnection();
             $res = mysqli_query($link,$sql) or die ("Error: " .mysqli_error($link));
-            $this->closeConection();
+            $this->closeConnection();
             return $res;
         }
 
@@ -119,12 +119,22 @@
             $_SESSION['form_errors'] = "All fields are required";
         }
 
+        public function createUserErrorSessions(){
+            session_start();
+            $_SESSION['form_errors'] = "Username already exists";
+        }
+
+        public function createLoginErrorSessions(){
+            session_start();
+            $_SESSION['form_errors'] = "Invalid username/password combination";
+        }
+
         public function hashPassword(){
             $this->password = password_hash($this->password, PASSWORD_DEFAULT);
         }
 
         public function isPasswordCorrect(){
-            $con = new $this->openConnection();
+            $con = $this->openConnection();
             $found = false;
             $res = mysqli_query($con,"SELECT * FROM user") or die("Error: " . mysqli_error($con));
 
@@ -134,7 +144,7 @@
                 }
             }
 
-            $this->closeConection();
+            $this->closeConnection();
             return $found;
         }
 
@@ -154,6 +164,21 @@
             unset($_SESSION['username']);
             session_destroy();
             header("Location:lab1.php");
+        }
+
+        public function isUserExist(){
+            $con = $this->openConnection();
+            $found = false;
+            $res = mysqli_query($con, "SELECT * FROM user") or die("Error: " . mysqli_error($con));
+
+            while($row=mysqli_fetch_array($res)){
+                if($this->getUsername() == $row['username']){
+                    $found = true;
+                }
+            }
+
+            $this->closeConnection();
+            return $found;
         }
     }
 ?>

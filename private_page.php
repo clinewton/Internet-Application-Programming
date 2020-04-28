@@ -17,6 +17,7 @@
 </head>
 
 <body>
+    <p>Welcome <?php echo $_SESSION['username'];?>!</p>
     <p>This is a private page</p>
     <p>We want to protect it</p>
     <p><a href="logout.php">Logout</a></p>

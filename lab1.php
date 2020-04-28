@@ -15,6 +15,13 @@ if(isset($_POST['btn-save'])){
         header("Refresh:0");
         die();
     }
+
+    if($user->isUserExist()){
+        $user->createUserErrorSessions();
+        header("Refresh:0");
+        die();
+    }
+
     $res = $user->save();
 
     if($res){
