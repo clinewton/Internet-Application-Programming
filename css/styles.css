@@ -1,0 +1,16 @@
+table,
+td {
+    border: 1px solid #000;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 5px;
+}
+
+
+/*This is an id*/
+
+#form-errors {
+    color: #ff0000;
+}
