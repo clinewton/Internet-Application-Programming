@@ -1,15 +1,32 @@
 <?php
 include_once 'DBConnector.php';
 include_once 'user.php';
+include_once 'fileUploader.php';
 
-if(isset($_POST['btn-save'])){
+if(isset($_POST['btn-save']) && isset($_FILES['fileToUpload'])){
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
     $city = $_POST['city_name'];
+
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $user = new User($first_name,$last_name,$city,$username,$password);
+    $utc_timestamp = $_POST['utc_timestamp'];
+    $offset = $_POST['time_zone_offset'];
+
+    $file_name = $_FILES['fileToUpload']['name'];
+    $file_size = $_FILES['fileToUpload']['size'];
+    $tmp_name = $_FILES['fileToUpload']['tmp_name'];
+    $file_type = pathinfo(basename($file_name),PATHINFO_EXTENSION);
+
+    $user = new User($first_name,$last_name,$city,$username,$password,$utc_timestamp,$offset,$file_name);
+    
+    $uploader = new FileUploader;
+    $uploader->setOriginalName($file_name);
+    $uploader->setFileType($file_type);
+    $uploader->setFileSize($file_size);
+    $uploader->setFinalFileName($tmp_name);
+    
     if(!$user->validateForm()){
         $user->createFormErrorSessions();
         header("Refresh:0");
@@ -22,12 +39,16 @@ if(isset($_POST['btn-save'])){
         die();
     }
 
-    $res = $user->save();
-
-    if($res){
-        echo "Save operation successful";
+    if($uploader->uploadFile()){
+        echo "File uploaded successfully!<br>";
+        $res = $user->save();
+        if($res){
+            echo "Save operation successful<br>";
+        } else {
+            echo "An error occurred!\n";
+        }
     } else {
-        echo "An error occured!";
+        echo "File could not be uploaded!<br>User could not be created";
     }
 }
 
@@ -36,18 +57,19 @@ function display(){
     return $user->readAll();
 }
 ?>
+</html>
     <!DOCTYPE html>
     <html lang="en">
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Lab 1</title>
         <link rel="stylesheet" href="css/styles.css">
-        <script type="text/javascript" src="js/validate.js"></script>
     </head>
 
     <body>
-        <form method="post" name="user_details" id="user_details" onsubmit="return validateForm()" action="<?php echo $_SERVER['PHP_SELF'];?>">
+        <form method="post" name="user_details" id="user_details" onsubmit="return validateForm()" action="<?php echo $_SERVER['PHP_SELF'];?>" enctype="multipart/form-data">
             <table align="center">
                 <tr>
                     <td>
@@ -63,7 +85,7 @@ function display(){
                     </td>
                 </tr>
                 <tr>
-                    <td><input type="text" name="first_name" placeholder="First Name" required></td>
+                    <td><input type="text" name="first_name" placeholder="First Name"></td>
                 </tr>
                 <tr>
                     <td><input type="text" name="last_name" placeholder="Last Name"></td>
@@ -78,8 +100,14 @@ function display(){
                     <td><input type="password" name="password" placeholder="Password"></td>
                 </tr>
                 <tr>
+                    <td>Profile Image: <input type="file" name="fileToUpload" id="fileToUpload"></td>
+                </tr>
+                <tr>
                     <td><button type="submit" name="btn-save"><strong>SAVE</strong></button></td>
                 </tr>
+
+                <input type="hidden" name="utc_timestamp" id="utc_timestamp" value="">
+                <input type="hidden" name="time_zone_offset" id="time_zone_offset" value="">
                 <tr>
                     <td><a href="login.php">Login</a></td>
                 </tr>
@@ -94,6 +122,8 @@ function display(){
                 <td>First Name</td>
                 <td>Last Name</td>
                 <td>User City</td>
+                <td>UTC Time</td>
+                <td>Offset</td>
             </thead>
             <tbody>
                 <?php 
@@ -102,27 +132,39 @@ function display(){
                         if(mysqli_num_rows($result)>0):
                             while($users = mysqli_fetch_assoc($result)): 
                 ?>
-                    <tr>
-                        <td>
-                            <?php echo $users['id']; ?>
-                        </td>
-                        <td>
-                            <?php echo $users['first_name']; ?>
-                        </td>
-                        <td>
-                            <?php echo $users['last_name']; ?>
-                        </td>
-                        <td>
-                            <?php echo $users['user_city']; ?>
-                        </td>
-                    </tr>
-                    <?php
+                <tr>
+                    <td>
+                        <?php echo $users['id']; ?>
+                    </td>
+                    <td>
+                        <?php echo $users['first_name']; ?>
+                    </td>
+                    <td>
+                        <?php echo $users['last_name']; ?>
+                    </td>
+                    <td>
+                        <?php echo $users['user_city']; ?>
+                    </td>
+                    <td>
+                        <?php echo $users['time']; ?>
+                    </td>
+                    <td>
+                        <?php echo $users['offset']; ?>
+                    </td>
+                </tr>
+                <?php
                             endwhile;
                         endif;
                     endif;
                 ?>
             </tbody>
         </table>
+
+        
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script type="text/javascript" src="js/validate.js"></script>
+        <script type="text/javascript" src="js/timezone.js"></script>
     </body>
 
     </html>
+    

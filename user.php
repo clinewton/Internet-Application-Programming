@@ -10,13 +10,20 @@
 
         private $username;
         private $password;
+
+        private $timestamp;
+        private $offset;
+        private $image;
         
-        function __construct($first_name, $last_name, $city_name, $username, $password){
+        function __construct($first_name, $last_name, $city_name, $username, $password, $timestamp, $offset,$image){
             $this->first_name = $first_name;
             $this->last_name = $last_name;
             $this->city_name = $city_name;
             $this->username = $username;
             $this->password = $password;
+            $this->timestamp = $timestamp;
+            $this->offset = $offset;
+            $this->image = $image;
         }
 
         public static function create(){
@@ -51,6 +58,24 @@
             return $this->password;
         }
 
+        //time getter
+        public function getTimestamp(){
+            return $this->timestamp;
+        }
+        //time setter
+        public function setTimestamp($timestamp){
+            $this->timestamp = $timestamp;
+        }
+
+        //offset getter
+        public function getOffset(){
+            return $this->offset;
+        }
+        //offset setter
+        public function setOffset($offset){
+            $this->offset = $offset;
+        }
+
         //open DB connection
         public function openConnection(){
             $conn = new DBConncetor;
@@ -69,8 +94,11 @@
             $uname = $this->username;
             $this->hashPassword();
             $pass = $this->password;
+            $time = $this->timestamp;
+            $offset = $this->offset;
+            $image = $this->image;
             $link = $this->openConnection();
-            $res = mysqli_query($link,"INSERT INTO user(first_name,last_name,user_city,username,password) VALUES ('$fn','$ln','$city','$uname','$pass')") or die ("Error: " .mysqli_error($link));
+            $res = mysqli_query($link,"INSERT INTO user(first_name,last_name,user_city,username,password,time,offset,image) VALUES ('$fn','$ln','$city','$uname','$pass','$time','$offset','$image')") or die ("Error: " .mysqli_error($link));
             $this->closeConnection();
             return $res;
         }

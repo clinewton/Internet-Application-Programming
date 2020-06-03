@@ -1,0 +1,13 @@
+{
+    "sqltools.connections": [
+        {
+            "askForPassword": false,
+            "database": "btc3205",
+            "dialect": "MariaDB",
+            "name": "phpMyAdmin",
+            "port": 3306,
+            "server": "localhost",
+            "username": "root"
+        }
+    ]
+}
