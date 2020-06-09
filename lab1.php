@@ -50,6 +50,7 @@ if(isset($_POST['btn-save']) && isset($_FILES['fileToUpload'])){
     } else {
         echo "File could not be uploaded!<br>User could not be created";
     }
+    
 }
 
 function display(){
@@ -66,6 +67,8 @@ function display(){
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Lab 1</title>
         <link rel="stylesheet" href="css/styles.css">
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.4/jstz.min.js">
+</script>
     </head>
 
     <body>
@@ -122,8 +125,8 @@ function display(){
                 <td>First Name</td>
                 <td>Last Name</td>
                 <td>User City</td>
-                <td>UTC Time</td>
-                <td>Offset</td>
+                <td>UTC Time (milliseconds)</td>
+                <td>Offset (milliseconds)</td>
             </thead>
             <tbody>
                 <?php 
