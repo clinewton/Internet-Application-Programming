@@ -67,7 +67,6 @@ function display(){
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Lab 1</title>
         <link rel="stylesheet" href="css/styles.css">
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.4/jstz.min.js">
 </script>
     </head>
 
