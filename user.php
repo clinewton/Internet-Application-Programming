@@ -1,4 +1,5 @@
 <?php
+    include 'DBConnector.php';
     include "Crud.php";
     include "Authenticator.php";
 
@@ -107,6 +108,14 @@
             $sql = "SELECT * FROM user";
             $link = $this->openConnection();
             $res = mysqli_query($link,$sql) or die ("Error: " .mysqli_error($link));
+            $this->closeConnection();
+            return $res;
+        }
+
+        public function readUser($username){
+            $sql = "SELECT * FROM user WHERE username = '$username'";
+            $link = $this->openConnection();
+            $res = mysqli_query($link, $sql) or die ("Error: " .mysqli_error($link));
             $this->closeConnection();
             return $res;
         }
