@@ -112,16 +112,13 @@
             return $res;
         }
 
-        public function readUser($username){
+        public function readUnique(){
+            $username = $this->getUsername();
             $sql = "SELECT * FROM user WHERE username = '$username'";
             $link = $this->openConnection();
             $res = mysqli_query($link, $sql) or die ("Error: " .mysqli_error($link));
             $this->closeConnection();
             return $res;
-        }
-
-        public function readUnique(){
-            return null;
         }
 
         public function search(){

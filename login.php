@@ -1,5 +1,4 @@
 <?php
-    include_once 'DBConnector.php';
     include_once 'user.php';
 
     if(isset($_POST['btn-login'])){

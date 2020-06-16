@@ -44,7 +44,8 @@
         <tbody>
             <?php
                 $user = User::create();
-                $result = $user->readUser($_SESSION['username']);
+                $user->setUsername($_SESSION['username']);
+                $result = $user->readUnique();
                 if ($result):
                     if (mysqli_num_rows($result)>0):
                         while ($user = mysqli_fetch_assoc($result)):
