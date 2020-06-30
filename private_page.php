@@ -1,12 +1,23 @@
-<?php 
+<?php
     include_once 'user.php';
+
     session_start();
     if(!isset($_SESSION['username'])){
         header("Location:login.php");
     }
 
     function fetchUserApiKey(){
-        echo "API Key";
+        $conn = new DBConncetor();
+        $link = $conn->__construct();
+        $username = $_SESSION['username'];
+        $query = "SELECT * FROM api_keys WHERE user_id = (SELECT id FROM user WHERE username = '$username') ORDER BY id DESC";
+        $res = mysqli_query($link, $query) or die("Error: ".mysqli_error($link));
+        if($res){
+            if(mysqli_num_rows($res) > 0){
+                $user = mysqli_fetch_assoc($res);
+                echo $user['api_key'];
+            }
+        }
     }
 ?>
 

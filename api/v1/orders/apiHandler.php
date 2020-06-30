@@ -52,21 +52,42 @@
         public function createOrder(){
             //saving the incoming order
             $con = new DBConncetor();
+            $link = $con->__construct();
             $name = $this->meal_name;
             $units = $this->meal_units;
             $unit_price = $this->unit_price;
             $order_status = $this->status;
             $query = "INSERT INTO orders (order_name,units,unit_price,order_status) VALUES('$name','$units','$unit_price','$order_status')";
-            $res = mysqli_query($con,$query);
+            $res = mysqli_query($link,$query) or die("Error: " .mysqli_error($link));
             return $res;
         }
 
-        public function checkOrderStatus(){}
+        public function checkOrderStatus($order_id){
+            $con = new DBConncetor();
+            $link = $con->__construct();
+            $query = "SELECT * FROM orders WHERE order_id = '$order_id'";
+            $res = mysqli_query($link, $query) or die("Error: " .mysqli_error($link));
+            $con->closeDatabase();
+            return $res;
+        }
 
         public function fetchAllOrders(){}
 
         public function checkApiKey(){
-            return true;
+            $conn = new DBConncetor();
+            $link = $conn->__construct();
+            $api_key = $this->user_api_key;
+            $key_exists = false;
+            $result = mysqli_query($link,"SELECT * FROM api_keys") or die("Error: " .mysqli_error($link));
+
+            while ($row = mysqli_fetch_array($result)){
+                if($api_key == $row['api_key']){
+                    $key_exists = true;
+                }
+            }
+
+            $conn->closeDatabase();
+            return $key_exists;
         }
 
         public function checkContentType(){}
